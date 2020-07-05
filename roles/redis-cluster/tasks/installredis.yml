@@ -1,0 +1,5 @@
+---
+- name: Install Redis
+  yum:
+    name: "{{redisversion}}"
+    state: latest

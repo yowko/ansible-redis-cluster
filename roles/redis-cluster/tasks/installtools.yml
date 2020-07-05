@@ -1,0 +1,44 @@
+- name: Install IUS
+  yum:
+    name: 
+      - https://repo.ius.io/ius-release-el7.rpm
+      - https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+    state: latest
+
+- include_tasks: installredis.yml
+
+- include_tasks: checkdir.yml
+  with_items: 
+  - {folder: "/etc/redis"}
+
+- name: Remove default redis service
+  shell: |
+    systemctl disable redis 
+
+- name: Delete redis service
+  file: 
+    path: "{{ item }}"
+    state: absent
+  with_items: 
+    - /usr/lib/systemd/system/redis.service
+    - /etc/systemd/system/redis.service.d
+    - /etc/systemd/system/redis-sentinel.service.d
+
+- name: Disable SELinux
+  shell: |
+    setenforce 0
+    sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config
+
+- name: Allow Overcommit Memory
+  sysctl:
+    name: vm.overcommit_memory
+    value: "1"
+    state: present
+    reload: yes
+    ignoreerrors: yes
+
+- name: Stop and disable firewalld.
+  service:
+    name: firewalld
+    state: stopped
+    enabled: False

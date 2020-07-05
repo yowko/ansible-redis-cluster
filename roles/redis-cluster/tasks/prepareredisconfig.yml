@@ -1,0 +1,11 @@
+---
+- include_tasks: checkdir.yml
+  with_items: 
+  - {folder: "/etc/redis/redis_{{ redis_port }}"}
+
+- name: Prepare Configs
+  template:
+    src: config.j2
+    dest: "/etc/redis/redis_{{ redis_port }}.conf"
+    owner: redis
+  notify: restart-service

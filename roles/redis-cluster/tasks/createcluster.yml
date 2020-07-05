@@ -1,0 +1,9 @@
+---
+- name: Create Cluster debug
+  debug:
+    msg: redis-cli -a {{redispass}} --cluster-replicas 1 --cluster create {% for redis_node in groups['redis_all'] %}{{ hostvars[redis_node]['redis_ip'] }}:{{ hostvars[redis_node]['redis_port'] }} {% endfor %}
+ 
+
+- name: Create Cluster
+  shell: |
+    echo "yes" |redis-cli -a {{redispass}} --cluster-replicas 1 --cluster create {% for redis_node in groups['redis_all'] %}{{ hostvars[redis_node]['redis_ip'] }}:{{ hostvars[redis_node]['redis_port'] }} {% endfor %}

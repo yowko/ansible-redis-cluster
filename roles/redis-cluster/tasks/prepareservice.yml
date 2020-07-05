@@ -1,0 +1,6 @@
+---
+- name: Prepare services
+  template:
+    src: service.j2
+    dest: "/etc/systemd/system/redis_{{redis_port}}.service"
+    owner: redis

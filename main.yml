@@ -1,0 +1,3 @@
+- hosts: redis_all
+  roles:
+    - redis-cluster

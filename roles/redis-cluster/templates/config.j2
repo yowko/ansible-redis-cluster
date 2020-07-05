@@ -1,0 +1,22 @@
+dir /etc/redis/redis_{{redis_port}}
+bind {{redis_ip}} 127.0.0.1
+requirepass {{redispass}}
+masterauth {{redispass}}
+port {{redis_port}}
+pidfile /var/run/redis_{{redis_port}}.pid
+
+# 啟用 redis cluster
+cluster-enabled yes
+# 每個 node 需要獨立，cluster 自行維護使用，不需人為介入
+cluster-config-file nodes_{{redis_port}}.conf
+# node 判斷失效的時間
+cluster-node-timeout 5000
+
+
+#rename-command 'SCRIPT KILL' ""
+maxclients 100000
+
+#tcp-keepalive 0
+
+maxmemory-policy volatile-lru
+loglevel notice
