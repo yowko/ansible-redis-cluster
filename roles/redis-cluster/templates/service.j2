@@ -7,12 +7,16 @@ Wants=network-online.target
 [Service]
 ExecStart=/usr/bin/redis-server /etc/redis/redis_{{redis_port}}.conf --supervised systemd
 
-ExecStop=/usr/libexec/redis-shutdown
+ExecStop=/usr/libexec/redis-shutdown redis/redis_{{redis_port}}
 Type=notify
 User=redis
 Group=redis
 RuntimeDirectory=redis_{{redis_port}}
 RuntimeDirectoryMode=0755
+LimitNOFILE=10000000
+LimitCORE=infinity
+LimitNPROC=infinity
+LimitMEMLOCK=infinity
 
 [Install]
 WantedBy=multi-user.target

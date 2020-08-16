@@ -1,5 +1,6 @@
 dir /etc/redis/redis_{{redis_port}}
-bind {{redis_ip}} 127.0.0.1
+logfile /etc/redis/redis_{{redis_port}}/{{redis_port}}.log
+bind {{ip}} 127.0.0.1
 requirepass {{redispass}}
 masterauth {{redispass}}
 port {{redis_port}}

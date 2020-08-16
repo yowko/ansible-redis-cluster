@@ -1,16 +1,32 @@
 - name: Stop Service
   service:
-    name: "redis_{{redis_port}}"
+    name: "redis_{{item}}"
     state: stopped
-
+  with_items: "{{ redis_ports }}"
+  
 - name: Disable Service
-  shell: |
-    systemctl disable redis_{{redis_port}}
+  shell: systemctl disable redis_{{item}}
+  with_items: "{{ redis_ports }}"
 
 - name: Delete config
   file: 
-    path: "{{ item }}"
+    path: "/etc/redis/redis_{{item}}.conf"
     state: absent
-  with_items:
-    - /etc/redis/redis_{{redis_port}}.conf
-    - /etc/systemd/system/redis_{{redis_port}}.service
+  with_items: "{{ redis_ports }}"
+
+- name: Delete service
+  file: 
+    path: "/etc/systemd/system/redis_{{item}}.service"
+    state: absent
+  with_items: "{{ redis_ports }}"
+
+- name: Recursively remove directory
+  file:
+    path: /etc/redis/redis_{{item}}
+    state: absent
+  with_items: "{{ redis_ports }}"
+
+- name: Remove directory
+  file:
+    path: /etc/redis/
+    state: absent

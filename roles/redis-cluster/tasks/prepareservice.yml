@@ -1,6 +1,10 @@
 ---
 - name: Prepare services
+  vars:
+    redis_port: "{{item}}"
   template:
     src: service.j2
-    dest: "/etc/systemd/system/redis_{{redis_port}}.service"
+    dest: "/etc/systemd/system/redis_{{item}}.service"
     owner: redis
+    group: redis
+  with_items: "{{redis_ports}}"

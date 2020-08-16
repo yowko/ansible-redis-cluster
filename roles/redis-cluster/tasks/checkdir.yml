@@ -1,8 +1,9 @@
 ---
 - name: Ensures dir exists
   file: 
-    path: "{{ item.folder }}"
+    path: "{{ folder }}"
     state: directory
     mode: 0755
     owner: redis
+    group: redis
     recurse: yes

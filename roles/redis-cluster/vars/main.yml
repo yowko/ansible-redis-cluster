@@ -1,3 +1,2 @@
-action: update
 redispass: pass.123
-redisversion: redis5-5.0.7-1.el7.ius
+redisversion: redis-6.0.6-1.el7.remi

@@ -1,28 +1,46 @@
 ---
-- include_tasks: uninstall.yml
-  when: action == 'uninstall' or action == 'reinstall'
+- name: Uninstall
+  include_tasks: uninstall.yml
+  when: purpose == 'uninstall' or purpose == 'reinstall'
 
-- include_tasks: installtools.yml
-  when: action == 'install'
+- name: Install rpm and redis
+  include_tasks: installtools.yml
+  when: purpose == 'install'
 
-- include_tasks: upgrade.yml
-  when: action == 'upgrade'
+- name: Upgrde redis
+  include_tasks: upgrade.yml
+  when: purpose == 'upgrade'
 
-- include_tasks: prepareservice.yml
-  when: action == 'install' or action == 'reinstall'
+- name: create linux user
+  shell: |
+    groupadd --system redis
+    useradd -s /sbin/nologin --system -g redis redis
+  ignore_errors: yes
+  when: purpose == 'install'
 
-- include_tasks: prepareredisconfig.yml
-  when: action != 'uninstall'
+- name: Generate redis config file
+  include_tasks: prepareredisconfig.yml
+  when: purpose != 'uninstall'
+
+- name: Generate service file
+  include_tasks: prepareservice.yml
+  when: purpose == 'install' or purpose == 'reinstall'
 
 - name: Restart Service
   debug:
     msg: restart service
   notify: restart-service
   changed_when: true
-  when: action == 'restart'
+  when: purpose == 'restart'
 
 - meta: flush_handlers
 
-- include_tasks: createcluster.yml
+- name: Run cluster creation script
+  include_tasks: createcluster.yml
   run_once: true
-  when: action == 'install' or action == 'reinstall'
+  when: purpose == 'install' or purpose == 'reinstall'
+
+# - name: show message
+#   #run_once: true
+#   debug: 
+#     msg: install redis
